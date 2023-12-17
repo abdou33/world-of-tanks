@@ -12,6 +12,15 @@ public class tank_movements : MonoBehaviour
     private Rigidbody rb;
     private float moveInput;
     private float rotationInput;
+
+
+    //fire
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float bulletSpeed = 1000f;
+    public float fireRate = 80f;
+
+    private float nextFireTime = 0f;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -25,6 +34,12 @@ public class tank_movements : MonoBehaviour
         rotationInput = Input.GetAxis("Horizontal");
 
         RotateWheels(moveInput, rotationInput);
+
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextFireTime)
+        {
+            Shoot();
+            nextFireTime = Time.time + 1f / fireRate;
+        }
     }
     void FixedUpdate()
     {
@@ -63,5 +78,12 @@ public class tank_movements : MonoBehaviour
                 // wheelRotation - rotationInput * wheelsrotationspeed * Time.deltaTime
             }
         }
+    }
+
+    void Shoot()
+    {
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        Rigidbody bulletRb = bullet.GetComponent<Rigidbody>();
+        bulletRb.velocity = firePoint.forward * bulletSpeed;
     }
 }
